@@ -1,0 +1,13 @@
+{
+  "name": "tiny-pomodoro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A tiny Pomodoro timer and daily task web app.",
+  "scripts": {
+    "start": "npx serve .",
+    "check": "node --check app.js"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}

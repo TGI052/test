@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>轻量番茄钟</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <section class="timer-panel" aria-label="番茄钟">
+        <div class="mode-tabs" role="tablist" aria-label="计时模式">
+          <button class="mode active" data-minutes="25" type="button">专注</button>
+          <button class="mode" data-minutes="5" type="button">短休息</button>
+          <button class="mode" data-minutes="15" type="button">长休息</button>
+        </div>
+
+        <form id="customForm" class="custom-form" aria-label="自定义时长">
+          <label for="customMinutes">自定义</label>
+          <div>
+            <input
+              id="customMinutes"
+              type="number"
+              min="1"
+              max="180"
+              step="1"
+              placeholder="分钟"
+              inputmode="numeric"
+            />
+            <button type="submit">设置</button>
+          </div>
+        </form>
+
+        <div class="timer-ring" aria-live="polite">
+          <svg viewBox="0 0 220 220" aria-hidden="true">
+            <circle class="track" cx="110" cy="110" r="96"></circle>
+            <circle class="progress" cx="110" cy="110" r="96"></circle>
+          </svg>
+          <div class="timer-text">
+            <p id="modeLabel">专注时间</p>
+            <h1 id="timeLeft">25:00</h1>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button id="startPause" class="primary" type="button">开始</button>
+          <button id="reset" type="button">重置</button>
+        </div>
+      </section>
+
+      <section class="tasks-panel" aria-label="待办清单">
+        <div class="section-heading">
+          <h2>今日待办</h2>
+          <span id="taskCount">0/0</span>
+        </div>
+
+        <form id="taskForm" class="task-form">
+          <input id="taskInput" type="text" maxlength="40" placeholder="添加一件要完成的事" autocomplete="off" />
+          <button type="submit">添加</button>
+        </form>
+
+        <ul id="taskList" class="task-list"></ul>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
