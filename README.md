@@ -1,23 +1,23 @@
 # Tiny Pomodoro
 
-一个轻量的番茄钟和今日待办网页应用。
+A lightweight Pomodoro timer and daily task web app.
 
-## 功能
+## Features
 
-- 专注、短休息、长休息三种预设计时
-- 1 到 180 分钟自定义时长
-- 今日待办添加、完成、删除
-- 待办数据保存在浏览器本地
+- Focus, short break, and long break presets
+- Custom timer duration from 1 to 180 minutes
+- Add, complete, and delete daily tasks
+- Task data is saved locally in the browser
 
-## 本地预览
+## Local Preview
 
 ```bash
 npm install
 npm start
 ```
 
-也可以直接打开 `index.html` 使用。
+You can also open `index.html` directly in a browser.
 
-## 发布
+## Deployment
 
-这是一个纯静态网站，可以发布到 GitHub Pages、Vercel、Netlify、Cloudflare Pages 或任何静态网站托管服务。
+This is a static website. It can be deployed to GitHub Pages, Vercel, Netlify, Cloudflare Pages, or any static hosting service.
