@@ -6,10 +6,15 @@ const reset = document.querySelector("#reset");
 const progress = document.querySelector(".progress");
 const customForm = document.querySelector("#customForm");
 const customMinutes = document.querySelector("#customMinutes");
+const sessionCount = document.querySelector("#sessionCount");
+const totalMinutes = document.querySelector("#totalMinutes");
+const soundToggle = document.querySelector("#soundToggle");
 const taskForm = document.querySelector("#taskForm");
 const taskInput = document.querySelector("#taskInput");
 const taskList = document.querySelector("#taskList");
 const taskCount = document.querySelector("#taskCount");
+const clearDone = document.querySelector("#clearDone");
+const emptyTasks = document.querySelector("#emptyTasks");
 
 const ringLength = 2 * Math.PI * 96;
 progress.style.strokeDasharray = ringLength;
@@ -19,6 +24,7 @@ let remainingSeconds = totalSeconds;
 let timerId = null;
 let activeModeName = "专注时间";
 let tasks = loadTasks();
+let stats = loadStats();
 
 function formatTime(seconds) {
   const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
@@ -33,6 +39,11 @@ function renderTimer() {
   const ratio = remainingSeconds / totalSeconds;
   progress.style.strokeDashoffset = ringLength * (1 - ratio);
   document.title = `${formatTime(remainingSeconds)} - 轻量番茄钟`;
+}
+
+function renderStats() {
+  sessionCount.textContent = stats.sessions;
+  totalMinutes.textContent = stats.minutes;
 }
 
 function setMode(button) {
@@ -69,11 +80,20 @@ function tick() {
   renderTimer();
 
   if (remainingSeconds <= 0) {
+    completeSession();
     stopTimer();
     remainingSeconds = totalSeconds;
     renderTimer();
     alert("时间到。");
   }
+}
+
+function completeSession() {
+  stats.sessions += 1;
+  stats.minutes += Math.round(totalSeconds / 60);
+  saveStats();
+  renderStats();
+  playDoneSound();
 }
 
 function loadTasks() {
@@ -84,12 +104,52 @@ function loadTasks() {
   }
 }
 
+function loadStats() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("tinyPomodoroStats")) || {};
+    return {
+      sessions: Number(saved.sessions) || 0,
+      minutes: Number(saved.minutes) || 0,
+    };
+  } catch {
+    return { sessions: 0, minutes: 0 };
+  }
+}
+
 function saveTasks() {
   localStorage.setItem("tinyPomodoroTasks", JSON.stringify(tasks));
 }
 
+function saveStats() {
+  localStorage.setItem("tinyPomodoroStats", JSON.stringify(stats));
+}
+
+function playDoneSound() {
+  if (!soundToggle.checked) return;
+
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+
+  const audio = new AudioContext();
+  const oscillator = audio.createOscillator();
+  const gain = audio.createGain();
+
+  oscillator.type = "sine";
+  oscillator.frequency.setValueAtTime(880, audio.currentTime);
+  oscillator.frequency.setValueAtTime(660, audio.currentTime + 0.14);
+  gain.gain.setValueAtTime(0.0001, audio.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.22, audio.currentTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.38);
+
+  oscillator.connect(gain);
+  gain.connect(audio.destination);
+  oscillator.start();
+  oscillator.stop(audio.currentTime + 0.42);
+}
+
 function renderTasks() {
   taskList.innerHTML = "";
+  emptyTasks.hidden = tasks.length > 0;
 
   tasks.forEach((task) => {
     const item = document.createElement("li");
@@ -125,6 +185,7 @@ function renderTasks() {
 
   const done = tasks.filter((task) => task.done).length;
   taskCount.textContent = `${done}/${tasks.length}`;
+  clearDone.disabled = done === 0;
 }
 
 modes.forEach((button) => {
@@ -145,6 +206,12 @@ reset.addEventListener("click", () => {
   stopTimer();
   remainingSeconds = totalSeconds;
   renderTimer();
+});
+
+clearDone.addEventListener("click", () => {
+  tasks = tasks.filter((task) => !task.done);
+  saveTasks();
+  renderTasks();
 });
 
 customForm.addEventListener("submit", (event) => {
@@ -171,7 +238,7 @@ taskForm.addEventListener("submit", (event) => {
   if (!text) return;
 
   tasks.unshift({
-    id: crypto.randomUUID(),
+    id: crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
     text,
     done: false,
   });
@@ -181,4 +248,5 @@ taskForm.addEventListener("submit", (event) => {
 });
 
 renderTimer();
+renderStats();
 renderTasks();

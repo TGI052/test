@@ -42,16 +42,35 @@
           </div>
         </div>
 
+        <div class="stats" aria-label="专注统计">
+          <div>
+            <strong id="sessionCount">0</strong>
+            <span>完成次数</span>
+          </div>
+          <div>
+            <strong id="totalMinutes">0</strong>
+            <span>累计分钟</span>
+          </div>
+        </div>
+
         <div class="controls">
           <button id="startPause" class="primary" type="button">开始</button>
           <button id="reset" type="button">重置</button>
         </div>
+
+        <label class="sound-toggle">
+          <input id="soundToggle" type="checkbox" checked />
+          <span>时间到时播放提示音</span>
+        </label>
       </section>
 
       <section class="tasks-panel" aria-label="待办清单">
         <div class="section-heading">
           <h2>今日待办</h2>
-          <span id="taskCount">0/0</span>
+          <div class="task-actions">
+            <span id="taskCount">0/0</span>
+            <button id="clearDone" type="button">清理已完成</button>
+          </div>
         </div>
 
         <form id="taskForm" class="task-form">
@@ -59,6 +78,7 @@
           <button type="submit">添加</button>
         </form>
 
+        <p id="emptyTasks" class="empty-tasks">还没有待办，先添加一件小事。</p>
         <ul id="taskList" class="task-list"></ul>
       </section>
     </main>
